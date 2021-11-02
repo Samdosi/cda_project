@@ -5,7 +5,58 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-
+    if (ALUControl == '000')
+    {
+        *ALUresult = A + B;
+    }
+    else if (ALUControl == '001')
+    {
+        *ALUresult = A - B;
+    }
+    else if(ALUControl == '010')
+    {
+        if (A < B)
+        {
+            *ALUresult = 1;
+        }
+        else
+        {
+            *ALUresult = 0;
+        }
+    }
+    else if(ALUControl == '011')
+    {
+        if (A < B)
+        {
+            *ALUresult = 1;
+        }
+        else
+        {
+            *ALUresult = 0;
+        }
+    }
+    else if(ALUControl == '100'){
+        *ALUresult = A & B;
+    }
+    else if(ALUControl == '101'){
+        *ALUresult = A | B;
+    }
+    else if(ALUControl == '110'){
+        *ALUresult = B << 16; // check it for me
+    }
+    else if(ALUControl == '111'){
+        *ALUresult = !A;    // check it for me
+    }
+    
+    
+    if (ALUresult == 0)
+    {
+        *Zero = 1;
+    }
+    else
+    {
+        *Zero = 0;
+    }
 }
 
 /* instruction fetch */
