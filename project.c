@@ -5,7 +5,7 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-    if (ALUControl == '000')
+     if (ALUControl == '000')
     {
         *ALUresult = A + B;
     }
