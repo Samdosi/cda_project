@@ -8,6 +8,7 @@
 #define SPINIT 0xFFFC
 #define GPINIT 0xC000
 
+// hello I'm Michael
 static unsigned Mem[MEMSIZE];
 static unsigned Reg[REGSIZE + 4];
 
