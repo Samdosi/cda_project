@@ -5,15 +5,15 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-     if (strcmpy('0',ALUControl) == 0)
+     if (strcmp('0',ALUControl) == 0)
     {
         *ALUresult = A + B;
     }
-    else if (strcmpy('1',ALUControl) == 0)
+    else if (strcmp('1',ALUControl) == 0)
     {
         *ALUresult = A - B;
     }
-    else if(strcmpy('2',ALUControl) == 0)
+    else if(strcmp('2',ALUControl) == 0)
     {
         if (A < B)
         {
@@ -24,7 +24,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
             *ALUresult = 0;
         }
     }
-    else if(strcmpy('3',ALUControl) == 0)
+    else if(strcmp('3',ALUControl) == 0)
     {
         if (A < B)
         {
@@ -35,17 +35,17 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
             *ALUresult = 0;
         }
     }
-    else if(strcmpy('4',ALUControl) == 0){
+    else if(strcmp('4',ALUControl) == 0){
         *ALUresult = A & B;
     }
-    else if(strcmpy('5',ALUControl) == 0){
+    else if(strcmp('5',ALUControl) == 0){
         *ALUresult = A | B;
     }
-    else if(strcmpy('6',ALUControl) == 0){
-        *ALUresult = B << 16; // check it for me
+    else if(strcmp('6',ALUControl) == 0){
+        *ALUresult = B << 16; 
     }
-    else if(strcmpy('7',ALUControl) == 0){
-        *ALUresult = ~A;    // check it for me
+    else if(strcmp('7',ALUControl) == 0){
+        *ALUresult = ~A;    
     }
     
     
