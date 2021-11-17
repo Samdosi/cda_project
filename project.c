@@ -15,10 +15,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
     }
     else if(strcmp('010',ALUControl) == 0)
     {
-        // Have the correct value for sign
-        A = -((~A) + 1);
-        B = -((~B) + 1);
-        if (A < B)
+        if ((signed) A <  (signed) B)
         {
             *ALUresult = 1;
         }
