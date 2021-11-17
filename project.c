@@ -5,15 +5,29 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-     if (strcmp('0',ALUControl) == 0)
+     if (strcmp('000',ALUControl) == 0)
     {
         *ALUresult = A + B;
     }
-    else if (strcmp('1',ALUControl) == 0)
+    else if (strcmp('001',ALUControl) == 0)
     {
         *ALUresult = A - B;
     }
-    else if(strcmp('2',ALUControl) == 0)
+    else if(strcmp('010',ALUControl) == 0)
+    {
+        // Have the correct value for sign
+        A = -((~A) + 1);
+        B = -((~B) + 1);
+        if (A < B)
+        {
+            *ALUresult = 1;
+        }
+        else
+        {
+            *ALUresult = 0;
+        }
+    }
+    else if(strcmp('011',ALUControl) == 0)
     {
         if (A < B)
         {
@@ -24,27 +38,16 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
             *ALUresult = 0;
         }
     }
-    else if(strcmp('3',ALUControl) == 0)
-    {
-        if (A < B)
-        {
-            *ALUresult = 1;
-        }
-        else
-        {
-            *ALUresult = 0;
-        }
-    }
-    else if(strcmp('4',ALUControl) == 0){
+    else if(strcmp('100',ALUControl) == 0){
         *ALUresult = A & B;
     }
-    else if(strcmp('5',ALUControl) == 0){
+    else if(strcmp('101',ALUControl) == 0){
         *ALUresult = A | B;
     }
-    else if(strcmp('6',ALUControl) == 0){
+    else if(strcmp('110',ALUControl) == 0){
         *ALUresult = B << 16; 
     }
-    else if(strcmp('7',ALUControl) == 0){
+    else if(strcmp('111',ALUControl) == 0){
         *ALUresult = ~A;    
     }
     
@@ -63,6 +66,18 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+     // Check for word alignment
+     if(PC % 4 == 0)
+     {
+          // Check if out of memory
+          if(((PC >> 2) >= 4096) && ((PC >> 2) <=16383)){
+               
+               // Fetch the instruction
+               *instruction = Mem[PC >> 2];
+               return 0;
+          }
+     }
+     return 1;
 
 }
 
@@ -71,7 +86,14 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 /* 10 Points */
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
-
+     // Partition the instruction
+     *op = (instruction & 0xFC000000) >> 26;
+     *r1 = (instruction & 0x3E00000) >> 21;
+     *r2 = (instruction & 0x1F0000) >> 16;
+     *r3 = (instruction & 0xF800) >> 11;
+     *funct = (instruction & 0x3F);
+     *offset = (instruction & 0xFFFF);
+     *jsec = (instruction & 0x3FFFFFF);
 }
 
 
@@ -80,6 +102,124 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+     if(op == 0)
+     {
+          controls->RegDst = '1';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '111';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '0';
+          controls->RegWrite = '1';
+          return 0;
+     }
+     else if(op == 8)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '000';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '1';
+          controls->RegWrite = '1';
+          return 0;
+     }
+     else if(op == 2)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '1';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '000';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '0';
+          controls->RegWrite = '0';
+          return 0;
+     }
+     else if(op == 10)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '010';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '1';
+          controls->RegWrite = '1';
+          return 0;
+     }
+     else if(op == 11)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '011';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '1';
+          controls->RegWrite = '1';
+          return 0;
+     }
+     else if(op == 35)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '1';
+          controls->MemtoReg = '1';
+          controls->ALUOp = '000';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '1';
+          controls->RegWrite = '1';
+          return 0;
+     }
+     else if(op == 43)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '000';
+          controls->MemWrite = '1';
+          controls->ALUSrc = '1';
+          controls->RegWrite = '0';
+          return 0;
+     }
+     else if(op == 4)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '1';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '001';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '0';
+          controls->RegWrite = '0';
+          return 0;
+     }
+     else if(op == 15)
+     {
+          controls->RegDst = '0';
+          controls->Jump = '0';
+          controls->Branch = '0';
+          controls->MemRead = '0';
+          controls->MemtoReg = '0';
+          controls->ALUOp = '110';
+          controls->MemWrite = '0';
+          controls->ALUSrc = '1';
+          controls->RegWrite = '1';
+          return 0;
+     }
+     return 1;
 
 }
 
@@ -87,7 +227,8 @@ int instruction_decode(unsigned op,struct_controls *controls)
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
-
+     *data1 = Reg[r1];
+     *data2 = Reg[r2];
 }
 
 
@@ -95,14 +236,20 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+     if(((1 << 16) & offset) != 0)
+     {
+          *extended_value = offset | 0xFFFF0000;
+     }
+     else
+          *extended_value = offset;
+     
 }
 
 /* ALU operations */
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-
+     
 }
 
 /* Read / Write Memory */
