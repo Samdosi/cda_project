@@ -1,6 +1,6 @@
 #include "spimcore.h"
 
-
+https://github.com/Samdosi/cda_project/blob/6e6671f68666e92c55f9c7aeec1c8f8788982b87/project.c
 /* ALU */
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
